@@ -53,6 +53,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="ufM-gS-dsV"/>
                     <connections>
+                        <outlet property="mapKitView" destination="63B-yp-J1m" id="k8N-E6-OTZ"/>
                         <outlet property="searchButton" destination="4kG-3v-GG0" id="YVW-uz-Q3f"/>
                         <outlet property="searchField" destination="CgT-5u-jF9" id="51i-s1-JqZ"/>
                     </connections>

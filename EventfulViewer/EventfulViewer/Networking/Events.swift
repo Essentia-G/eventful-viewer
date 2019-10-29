@@ -9,7 +9,6 @@
 import Foundation
 
 struct Events: Codable {
-    //var events: [String: [Event]]
     var events: Event?
 
     
