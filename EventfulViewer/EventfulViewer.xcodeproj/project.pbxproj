@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		851FF68B23671FD600F70CB7 /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851FF68A23671FD600F70CB7 /* MapPin.swift */; };
+		854069052369769600C340A8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854069042369769600C340A8 /* DetailViewController.swift */; };
 		858FF5CC2363082700CEE63A /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858FF5CB2363082700CEE63A /* Assembly.swift */; };
 		85952ED12361BAA300D4354A /* searchBut.png in Resources */ = {isa = PBXBuildFile; fileRef = 85952ED02361BAA300D4354A /* searchBut.png */; };
 		859BC7DA23618F4200D65209 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859BC7D923618F4200D65209 /* AppDelegate.swift */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		851FF68A23671FD600F70CB7 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
+		854069042369769600C340A8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		858FF5CB2363082700CEE63A /* Assembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembly.swift; sourceTree = "<group>"; };
 		85952ED02361BAA300D4354A /* searchBut.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchBut.png; sourceTree = "<group>"; };
 		859BC7D623618F4200D65209 /* EventfulViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventfulViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -92,6 +94,7 @@
 				859BC7F02361A9D300D65209 /* Icons */,
 				858988EB2362F4180063EEF3 /* Resourses */,
 				859BC7DB23618F4200D65209 /* ViewController.swift */,
+				854069042369769600C340A8 /* DetailViewController.swift */,
 				851FF68A23671FD600F70CB7 /* MapPin.swift */,
 				859BC7DD23618F4200D65209 /* Main.storyboard */,
 				859BC7E823618F4400D65209 /* Info.plist */,
@@ -207,6 +210,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				854069052369769600C340A8 /* DetailViewController.swift in Sources */,
 				85D3B1762362EA1600A30DF3 /* EventParser.swift in Sources */,
 				85F65F062366FBBE0020D5A5 /* Event.swift in Sources */,
 				858FF5CC2363082700CEE63A /* Assembly.swift in Sources */,

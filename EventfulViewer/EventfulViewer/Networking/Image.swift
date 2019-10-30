@@ -11,6 +11,6 @@ import Foundation
 struct Image: Codable {
     var width: Int
     var height: Int
-    var url: URL
+    var url: String
     var venue_id: String
 }

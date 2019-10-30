@@ -10,12 +10,15 @@ import Foundation
 import MapKit
 
 class MapPin : NSObject, MKAnnotation {
-    var coordinate: CLLocationCoordinate2D
-    var title: String?
+    let coordinate: CLLocationCoordinate2D
+    let title: String?
+    let descript: String?
     
-    init(coordinate: CLLocationCoordinate2D, title: String) {
+    init(coordinate: CLLocationCoordinate2D, title: String, descript: String) {
         self.coordinate = coordinate
         self.title = title
+        self.descript = descript
+        super.init()
     }
 }
 

@@ -62,6 +62,21 @@
             </objects>
             <point key="canvasLocation" x="1779.7101449275365" y="665.625"/>
         </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="xYj-Iy-8OP">
+            <objects>
+                <viewController storyboardIdentifier="DetailView" id="foj-Qw-Jlj" customClass="DetailViewController" customModule="EventfulViewer" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kJd-sg-js8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="VEC-dL-ZaA"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8LF-Wi-dw5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="957.97101449275374" y="1352.6785714285713"/>
+        </scene>
         <!--Map-->
         <scene sceneID="1B7-yM-OXm">
             <objects>
@@ -75,6 +90,7 @@
                     <nil name="viewControllers"/>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="hLY-5l-BpI"/>
+                        <segue destination="foj-Qw-Jlj" kind="presentation" identifier="DetailViewController" id="nm2-Nv-StN"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7g8-B5-bTr" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -14,10 +14,12 @@ struct EventDetail: Codable {
     var title: String
     var latitude: String
     var longitude: String
-    //var url: URL
+    var url: String
     var venueAddress: String
     var regionName: String
     //var image: [Image]
+    var description: String
+    var startTime: String
     
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -27,7 +29,9 @@ struct EventDetail: Codable {
             self.longitude = (try? container.decode(String.self, forKey: .longitude)) ?? ""
             self.venueAddress = (try? container.decode(String.self, forKey: .venueAddress)) ?? ""
             self.regionName = (try? container.decode(String.self, forKey: .regionName)) ?? ""
-    
+            self.description = (try? container.decode(String.self, forKey: .description)) ?? ""
+            self.startTime = (try? container.decode(String.self, forKey: .startTime)) ?? ""
+            self.url = (try? container.decode(String.self, forKey: .url)) ?? ""
         }
     
     enum CodingKeys: String, CodingKey {
@@ -35,10 +39,12 @@ struct EventDetail: Codable {
         case title
         case latitude
         case longitude
-        //case url
+        case url
         case venueAddress = "venue_address"
         case regionName = "region_name"
         //case image
+        case description
+        case startTime = "start_time"
         
     }
     

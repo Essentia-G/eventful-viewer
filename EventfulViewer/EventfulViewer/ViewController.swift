@@ -9,23 +9,33 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchField: UITextField!
     @IBOutlet weak var mapKitView: MKMapView!
     
-    let regionRadius: CLLocationDistance = 1000
+    let regionRadius: CLLocationDistance = 2000
+    
     
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=music&location=london&sort_order=popularity"
-    //var event = [Event]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapKitView.delegate = self
+        
         
         // set initial location in London
         let initialLocation = CLLocation(latitude: 51.509865, longitude: -0.118092)
         centerMapOnLocation(location: initialLocation)
+        
+        guard let url = URL(string: apiUrlString) else { return }
+        URLSession.shared.dataTask(with: url) { [weak self] (data, res, err) in
+            
+            guard let self = self, let data = data else { return }
+            
+            self.parse(json: data)
+            }.resume()
         
         //show hardcoded pin on map
 //        let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: 51.5009088, longitude: -0.177366), title: "Zucchero", subtitle: "Zucchero")
@@ -36,12 +46,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         configButton()
-        
-//        let annotation = MKPointAnnotation()
-//        annotation.title = "Test test"
-//        annotation.coordinate = CLLocationCoordinate2D(latitude: 51.50, longitude: -0.17)
-  
-        //mapKitView?.addAnnotation(annotation)
+
     }
     
     func configButton() {
@@ -56,34 +61,8 @@ class ViewController: UIViewController {
     
     
     @IBAction func searchButtonTapped(_ sender: UIButton) {
-        guard let url = URL(string: apiUrlString) else { return }
-        URLSession.shared.dataTask(with: url) { [weak self] (data, res, err) in
-            
-            guard let self = self, let data = data else { return }
 
-            self.parse(json: data)
-        }.resume()
-//        if let url = URL(string: apiUrlString) {
-//            //convert url to data instance
-//            if let data = try? Data(contentsOf: url) {
-//                //we're OK to parse data
-//                parse(json: data)
-//            } else {
-//                showError()
-//            }
-//        } else {
-//            showError()
-//        }
     }
-    
-//    func parse(json: Data) {
-//        DispatchQueue.global().async { [weak self] in
-//            let decoder = JSONDecoder()
-//            if let jsonEvents = try? decoder.decode(Events.self, from: json) {
-//                self?.event = jsonEvents.events
-//            }
-//        }
-//    }
     
     func parse(json: Data) {
         DispatchQueue.global().async { [weak self] in
@@ -99,13 +78,13 @@ class ViewController: UIViewController {
                     let lat = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].latitude ?? "0.0")
                     let long = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].longitude ?? "0.0")
                     let tit = jsonEvents?.events?.event[i].title
+                    let desc = jsonEvents?.events?.event[i].description
                     
-                    guard let latitide = lat, let longitude = long, let title = tit else { return }
+                    guard let latitide = lat, let longitude = long, let title = tit, let descript = desc else { return }
                     
-                    let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude), title: title)
+                    let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude), title: title, descript: descript)
                     self?.mapKitView.addAnnotation(mapPin)
                 }
-            
         }
     }
     
@@ -120,7 +99,57 @@ class ViewController: UIViewController {
         return doubCoordinates
     }
     
-}
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        
+        if let eventAnnotation = view.annotation as? MapPin {
+            let title = eventAnnotation.title
+            var descript = eventAnnotation.descript
+            descript = messageTextFormatter(line: descript ?? "")
+            print(title ?? "" + "\n")
+            print(descript ?? "")
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = NSTextAlignment.justified
+            
+            let attributedMessageText = NSMutableAttributedString(
+                string: descript ?? "",
+                attributes: [
+                    NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                    NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13.0)
+                ]
+            )
+            
+            let titleFont = [NSAttributedString.Key.font: UIFont(name: "ArialHebrew-Bold", size: 18.0)!]
+            let attributedTitleText = NSMutableAttributedString(string: title ?? "", attributes: titleFont)
+         
+            
+            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            actionSheet.setValue(attributedMessageText, forKey: "attributedMessage")
+            actionSheet.setValue(attributedTitleText, forKey: "attributedTitle")
+            
+            let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel) { action -> Void in
+                print("Cancel")
+            }
+            actionSheet.addAction(cancelActionButton)
+            self.present(actionSheet, animated: true, completion: nil)
+        }
+        
+        //guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "DetailView") else { return }
+        //self.present(vc, animated: true, completion: nil)
+    }
+    
+    
+    func messageTextFormatter(line: String) -> String {
+        if line.contains("<p>") {
+            var newLine = line.replacingOccurrences(of: "<p>", with: "")
+            newLine = newLine.replacingOccurrences(of: "</p>", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            return newLine
+        } else {
+        return line
+    }
+    }
+    
+ }
     
 
 
