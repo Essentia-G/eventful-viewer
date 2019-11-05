@@ -73,12 +73,12 @@ class ViewController: UIViewController, MKMapViewDelegate {
             
             guard let eventsToPin = jsonEvents?.events?.event else { return }
          
-                for i in eventsToPin.indices {
-                    print(eventsToPin[i].title)
-                    let lat = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].latitude ?? "0.0")
-                    let long = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].longitude ?? "0.0")
-                    let tit = jsonEvents?.events?.event[i].title
-                    let desc = jsonEvents?.events?.event[i].description
+                for index in eventsToPin.indices {
+                    print(eventsToPin[index].title)
+                    let lat = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[index].latitude ?? "0.0")
+                    let long = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[index].longitude ?? "0.0")
+                    let tit = jsonEvents?.events?.event[index].title
+                    let desc = jsonEvents?.events?.event[index].description
                     
                     guard let latitide = lat, let longitude = long, let title = tit, let descript = desc else { return }
                     
