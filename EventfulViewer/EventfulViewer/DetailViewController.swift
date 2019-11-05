@@ -11,7 +11,7 @@ import UIKit
 class DetailViewController: UIViewController {
 
     @IBOutlet weak var eventTitle: UILabel!
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)

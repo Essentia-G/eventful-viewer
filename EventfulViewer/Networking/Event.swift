@@ -10,15 +10,14 @@ import Foundation
 
 struct Event: Codable {
     var event: [EventDetail]
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.event = (try? container.decode([EventDetail].self, forKey: .event)) ?? []
     }
-    
-    
+
     enum CodingKeys: String, CodingKey {
         case event
     }
-    
+
 }

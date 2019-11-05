@@ -11,7 +11,6 @@ import Foundation
 struct Events: Codable {
     var events: Event?
 
-    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.events = (try? container.decode(Event.self, forKey: .events))
@@ -21,7 +20,4 @@ struct Events: Codable {
         case events
 
     }
-
-
-
 }

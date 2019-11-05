@@ -9,12 +9,12 @@
 import Foundation
 import MapKit
 
-class MapPin : NSObject, MKAnnotation {
+class MapPin: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     let title: String?
     let descript: String?
     let url: URL?
-    
+
     init(coordinate: CLLocationCoordinate2D, title: String, descript: String, url: URL) {
         self.coordinate = coordinate
         self.title = title
@@ -23,4 +23,3 @@ class MapPin : NSObject, MKAnnotation {
         super.init()
     }
 }
-

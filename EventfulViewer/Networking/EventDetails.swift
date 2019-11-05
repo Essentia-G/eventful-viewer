@@ -9,7 +9,7 @@
 import Foundation
 
 struct EventDetail: Codable {
-    
+
     var id: String
     var title: String
     var latitude: String
@@ -20,7 +20,7 @@ struct EventDetail: Codable {
     var image: Image?
     var description: String
     var startTime: String
-    
+
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.id = (try? container.decode(String.self, forKey: .id)) ?? ""
@@ -34,7 +34,7 @@ struct EventDetail: Codable {
             self.url = (try? container.decode(String.self, forKey: .url)) ?? ""
             self.image = (try? container.decode(Image?.self, forKey: .image)) 
         }
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case title
@@ -46,8 +46,5 @@ struct EventDetail: Codable {
         case description
         case startTime = "start_time"
         case image
-        
     }
-    
-    
 }
