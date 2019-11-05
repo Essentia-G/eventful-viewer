@@ -19,11 +19,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=music&location=london&sort_order=popularity"
+    //let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=books&location=london&sort_order=popularity"
+    //let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=sport&location=london&sort_order=popularity"
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround()
         mapKitView.delegate = self
-        
         
         // set initial location in London
         let initialLocation = CLLocation(latitude: 51.509865, longitude: -0.118092)
@@ -31,9 +33,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
         
         guard let url = URL(string: apiUrlString) else { return }
         URLSession.shared.dataTask(with: url) { [weak self] (data, res, err) in
-            
+
             guard let self = self, let data = data else { return }
-            
+
             self.parse(json: data)
             }.resume()
         
@@ -61,7 +63,28 @@ class ViewController: UIViewController, MKMapViewDelegate {
     
     
     @IBAction func searchButtonTapped(_ sender: UIButton) {
+        
+        if !searchField.text!.isEmpty {
+            if let eventCategory = searchField.text {
+                let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
+                mapKitView.removeAnnotations(annotationsToRemove)
+                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" + eventCategory + "&location=london&sort_order=popularity"
+                guard let url = URL(string: desirableUrl) else { return }
+                URLSession.shared.dataTask(with: url) { [weak self] (data, res, err) in
+                    
+                    guard let self = self, let data = data else { return }
+                    self.parse(json: data)
+                    }.resume()
+            }
+            searchField.text?.removeAll()
+        } else {
+            let ac = UIAlertController(title: "Field is empty", message: "Please enter your text", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(ac, animated: true)
+        }
+        
 
+        
     }
     
     func parse(json: Data) {
@@ -73,15 +96,15 @@ class ViewController: UIViewController, MKMapViewDelegate {
             
             guard let eventsToPin = jsonEvents?.events?.event else { return }
          
-                for i in eventsToPin.indices {
-                    print(eventsToPin[i].title)
-                    let lat = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].latitude ?? "0.0")
-                    let long = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[i].longitude ?? "0.0")
-                    let tit = jsonEvents?.events?.event[i].title
-                    let desc = jsonEvents?.events?.event[i].description
-                    let ur = NSURL(string: jsonEvents?.events?.event[i].url ?? "")
+                for index in eventsToPin.indices {
+                    print(eventsToPin[index].title)
+                    let lat = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[index].latitude ?? "0.0")
+                    let long = self?.receiveAPICoordinates(from: jsonEvents?.events?.event[index].longitude ?? "0.0")
+                    let tit = jsonEvents?.events?.event[index].title
+                    let desc = jsonEvents?.events?.event[index].description
+                    let ur = NSURL(string: jsonEvents?.events?.event[index].url ?? "")
                     
-                    if let image = jsonEvents?.events?.event[i].image {
+                    if let image = jsonEvents?.events?.event[index].image {
                         print(image.url)
                     }
 
@@ -93,12 +116,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
                 }
         }
-    }
-    
-    func showError() {
-        let ac = UIAlertController(title: "Loading error", message: "Please check your connection and try again", preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "OK", style: .default))
-        self.present(ac, animated: true)
     }
     
     func receiveAPICoordinates(from strCoordinates: String) -> Double? {
@@ -162,7 +179,25 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
     }
     
+    func showError() {
+        let ac = UIAlertController(title: "Loading error", message: "Please check your connection and try again", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(ac, animated: true)
+    }
+    
  }
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
     
 
 
