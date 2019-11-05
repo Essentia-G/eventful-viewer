@@ -9,11 +9,11 @@
 import Foundation
 import MapKit
 
-class MapPin : NSObject, MKAnnotation {
+class MapPin: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     let title: String?
     let descript: String?
-    
+
     init(coordinate: CLLocationCoordinate2D, title: String, descript: String) {
         self.coordinate = coordinate
         self.title = title
@@ -21,4 +21,3 @@ class MapPin : NSObject, MKAnnotation {
         super.init()
     }
 }
-

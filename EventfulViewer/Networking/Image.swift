@@ -13,7 +13,7 @@ struct Image: Codable {
     var height: String
     var url: String
     var venueId: String
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.width = (try? container.decode(String.self, forKey: .width)) ?? ""
@@ -21,7 +21,7 @@ struct Image: Codable {
         self.url = (try? container.decode(String.self, forKey: .url)) ?? ""
         self.venueId = (try? container.decode(String.self, forKey: .venueId)) ?? ""
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case width
         case height
