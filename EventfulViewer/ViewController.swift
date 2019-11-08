@@ -11,16 +11,25 @@ import MapKit
 
 class ViewController: UIViewController, MKMapViewDelegate {
 
+    // MARK: - UI
+
     @IBOutlet private weak var searchButton: UIButton!
     @IBOutlet private weak var searchField: UITextField!
     @IBOutlet private weak var mapKitView: MKMapView!
 
-    let regionRadius: CLLocationDistance = 2000
-    let locationManager = CLLocationManager()
-    var latitude: Double = 55.75222
-    var longitude: Double = 37.61556
+    private let regionRadius: CLLocationDistance = 2000
+    private let locationManager = CLLocationManager()
+    private var latitude: Double = 55.75222
+    private var longitude: Double = 37.61556
+    var arrayOfEvents = [Event]()
 
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
+    
+    // MARK: - Dependencies
+
+    var assembly: Assembly?
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +42,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
         centerMapOnLocation(location: initialLocation)
         checkLocationAuthorizationStatus()
+
         guard let url = URL(string: apiUrlString) else { return }
         URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
 
@@ -85,7 +95,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func parse(json: Data) {
         DispatchQueue.global().async { [weak self] in
             let decoder = JSONDecoder()
-
             let jsonEvents = try? decoder.decode(Events.self, from: json)
             print(jsonEvents?.events?.event[0] ?? "Have no events")
 
@@ -110,8 +119,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
                         let descript = descsriptionAttempt,
                         let url = urlAttempt else { return }
 
-                    let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide,
-                                                                           longitude: longitude),
+                    let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude),
                                         title: title,
                                         descript: descript,
                                         url: url as URL)
@@ -168,7 +176,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
             actionSheet.addAction(cancelActionButton)
             self.present(actionSheet, animated: true, completion: nil)
         }
-
     }
 
     func messageTextFormatter(line: String) -> String {
@@ -196,18 +203,4 @@ class ViewController: UIViewController, MKMapViewDelegate {
             locationManager.requestWhenInUseAuthorization()
         }
     }
-
  }
-
-extension UIViewController {
-    func hideKeyboardWhenTappedAround() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self,
-                                                                 action: #selector(UIViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-}

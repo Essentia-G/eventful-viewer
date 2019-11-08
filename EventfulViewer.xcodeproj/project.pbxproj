@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8504E79E2375647B00AC0D63 /* ViewControllerExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8504E79D2375647B00AC0D63 /* ViewControllerExtention.swift */; };
+		8504E7A22375810D00AC0D63 /* IEventParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8504E7A12375810D00AC0D63 /* IEventParser.swift */; };
+		8504E7A523758BC500AC0D63 /* EventParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8504E7A423758BC500AC0D63 /* EventParserService.swift */; };
+		8504E7A723758BD700AC0D63 /* IEventParserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8504E7A623758BD700AC0D63 /* IEventParserService.swift */; };
 		851FF68B23671FD600F70CB7 /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851FF68A23671FD600F70CB7 /* MapPin.swift */; };
 		854069052369769600C340A8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854069042369769600C340A8 /* DetailViewController.swift */; };
 		858FF5CC2363082700CEE63A /* Assembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858FF5CB2363082700CEE63A /* Assembly.swift */; };
@@ -30,6 +34,10 @@
 
 /* Begin PBXFileReference section */
 		7ED4585C06CE44D0BBFE3E57 /* Pods-EventfulViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EventfulViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EventfulViewer/Pods-EventfulViewer.debug.xcconfig"; sourceTree = "<group>"; };
+		8504E79D2375647B00AC0D63 /* ViewControllerExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtention.swift; sourceTree = "<group>"; };
+		8504E7A12375810D00AC0D63 /* IEventParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IEventParser.swift; sourceTree = "<group>"; };
+		8504E7A423758BC500AC0D63 /* EventParserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventParserService.swift; sourceTree = "<group>"; };
+		8504E7A623758BD700AC0D63 /* IEventParserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IEventParserService.swift; sourceTree = "<group>"; };
 		851FF68A23671FD600F70CB7 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
 		854069042369769600C340A8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		858FF5CB2363082700CEE63A /* Assembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembly.swift; sourceTree = "<group>"; };
@@ -66,6 +74,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8504E79C2375644700AC0D63 /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				8504E79D2375647B00AC0D63 /* ViewControllerExtention.swift */,
+			);
+			path = Extentions;
+			sourceTree = "<group>";
+		};
+		8504E7A323758B8B00AC0D63 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8504E7A623758BD700AC0D63 /* IEventParserService.swift */,
+				8504E7A423758BC500AC0D63 /* EventParserService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		858988EB2362F4180063EEF3 /* Resourses */ = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +121,8 @@
 		859BC7D823618F4200D65209 /* EventfulViewer */ = {
 			isa = PBXGroup;
 			children = (
+				8504E7A323758B8B00AC0D63 /* Services */,
+				8504E79C2375644700AC0D63 /* Extentions */,
 				85D3B1772362F38200A30DF3 /* Application */,
 				85D3B1742362E93400A30DF3 /* Networking */,
 				859BC7F02361A9D300D65209 /* Icons */,
@@ -128,6 +155,7 @@
 				85F65F052366FBBE0020D5A5 /* Event.swift */,
 				85D3B16E2362DD4000A30DF3 /* EventDetails.swift */,
 				85D3B1702362E4C100A30DF3 /* Image.swift */,
+				8504E7A12375810D00AC0D63 /* IEventParser.swift */,
 				85D3B1752362EA1600A30DF3 /* EventParser.swift */,
 			);
 			path = Networking;
@@ -280,10 +308,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				854069052369769600C340A8 /* DetailViewController.swift in Sources */,
+				8504E79E2375647B00AC0D63 /* ViewControllerExtention.swift in Sources */,
 				85D3B1762362EA1600A30DF3 /* EventParser.swift in Sources */,
+				8504E7A22375810D00AC0D63 /* IEventParser.swift in Sources */,
 				85F65F062366FBBE0020D5A5 /* Event.swift in Sources */,
 				858FF5CC2363082700CEE63A /* Assembly.swift in Sources */,
+				8504E7A723758BD700AC0D63 /* IEventParserService.swift in Sources */,
 				85D3B1732362E70A00A30DF3 /* Events.swift in Sources */,
+				8504E7A523758BC500AC0D63 /* EventParserService.swift in Sources */,
 				85D3B16F2362DD4000A30DF3 /* EventDetails.swift in Sources */,
 				859BC7DC23618F4200D65209 /* ViewController.swift in Sources */,
 				851FF68B23671FD600F70CB7 /* MapPin.swift in Sources */,

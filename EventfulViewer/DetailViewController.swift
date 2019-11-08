@@ -18,8 +18,6 @@ class DetailViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        //eventTitle.text = "Test"
-        // Do any additional setup after loading the view.
     }
 
 }
