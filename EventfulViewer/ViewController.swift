@@ -11,23 +11,28 @@ import MapKit
 
 class ViewController: UIViewController, MKMapViewDelegate {
 
-    @IBOutlet weak var searchButton: UIButton!
-    @IBOutlet weak var searchField: UITextField!
-    @IBOutlet weak var mapKitView: MKMapView!
+    @IBOutlet private weak var searchButton: UIButton!
+    @IBOutlet private weak var searchField: UITextField!
+    @IBOutlet private weak var mapKitView: MKMapView!
 
     let regionRadius: CLLocationDistance = 2000
+    let locationManager = CLLocationManager()
+    var latitude: Double = 55.75222
+    var longitude: Double = 37.61556
 
-    let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=music&location=london&sort_order=popularity"
+    let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
         mapKitView.delegate = self
 
-        // set initial location in London
-        let initialLocation = CLLocation(latitude: 51.509865, longitude: -0.118092)
+        // set initial location in Moscow
+        latitude = 55.75222
+        longitude = 37.61556
+        let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
         centerMapOnLocation(location: initialLocation)
-
+        checkLocationAuthorizationStatus()
         guard let url = URL(string: apiUrlString) else { return }
         URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
 
@@ -35,14 +40,12 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
             self.parse(json: data)
             }.resume()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         configButton()
-
     }
 
     func configButton() {
@@ -61,7 +64,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
             if let eventCategory = searchField.text {
                 let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
                 mapKitView.removeAnnotations(annotationsToRemove)
-                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" + eventCategory + "&location=london&sort_order=popularity"
+                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" + eventCategory + "&location=moscow&sort_order=popularity"
                 guard let url = URL(string: desirableUrl) else { return }
                 URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
 
@@ -77,7 +80,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
             alertController.addAction(UIAlertAction(title: "OK", style: .default))
             self.present(alertController, animated: true)
         }
-
     }
 
     func parse(json: Data) {
@@ -88,7 +90,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
             print(jsonEvents?.events?.event[0] ?? "Have no events")
 
             guard let eventsToPin = jsonEvents?.events?.event else { return }
-
                 for index in eventsToPin.indices {
                     print(eventsToPin[index].title)
                     let latitudeAttempt = self?.receiveAPICoordinates(from:
@@ -115,8 +116,11 @@ class ViewController: UIViewController, MKMapViewDelegate {
                                         descript: descript,
                                         url: url as URL)
                     self?.mapKitView.addAnnotation(mapPin)
-
                 }
+            guard let currentAnnotations = self?.mapKitView.annotations else { return }
+            DispatchQueue.main.async { [weak self] in
+                self?.mapKitView.showAnnotations(currentAnnotations, animated: true)
+            }
         }
     }
 
@@ -165,8 +169,6 @@ class ViewController: UIViewController, MKMapViewDelegate {
             self.present(actionSheet, animated: true, completion: nil)
         }
 
-        //guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "DetailView") else { return }
-        //self.present(vc, animated: true, completion: nil)
     }
 
     func messageTextFormatter(line: String) -> String {
@@ -185,6 +187,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
                                                 preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alertController, animated: true)
+    }
+
+    func checkLocationAuthorizationStatus() {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            mapKitView.showsUserLocation = true
+        } else {
+            locationManager.requestWhenInUseAuthorization()
+        }
     }
 
  }
