@@ -21,13 +21,11 @@ class ViewController: UIViewController, MKMapViewDelegate {
     private let locationManager = CLLocationManager()
     private var latitude: Double = 55.75222
     private var longitude: Double = 37.61556
-    //var arrayOfEvents = [Event]()
 
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
 
     // MARK: - Dependencies
 
-    //var assembly: Assembly?
     var eventParser = EventParser()
 
     // MARK: - Lifecycle
@@ -102,6 +100,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
             let title = eventsToPin[index].title
             let descsription = eventsToPin[index].description
             let urlAttempt = NSURL(string: eventsToPin[index].url)
+            let startTime = eventsToPin[index].startTime
 
             if let image = eventsToPin[index].image {
                 print(image.url)
@@ -114,7 +113,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
             let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude),
                                 title: title,
                                 descript: descsription,
-                                url: url as URL)
+                                url: url as URL,
+                                startTime: startTime)
             self.mapKitView.addAnnotation(mapPin)
         }
 
@@ -125,20 +125,19 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-
         if let eventAnnotation = view.annotation as? MapPin {
             let title = eventAnnotation.title
-            var descript = eventAnnotation.descript
-            descript = messageTextFormatter(line: descript ?? "")
+            var descript = (eventAnnotation.descript ?? "") + "\n\n" + "Start time: " + (eventAnnotation.startTime ?? "")
+            descript = messageTextFormatter(line: descript)
             let url = eventAnnotation.url
             print(title ?? "" + "\n")
-            print(descript ?? "")
+            print(descript)
 
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = NSTextAlignment.justified
 
             let attributedMessageText = NSMutableAttributedString(
-                string: descript ?? "",
+                string: descript,
                 attributes: [
                     NSAttributedString.Key.paragraphStyle: paragraphStyle,
                     NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13.0)

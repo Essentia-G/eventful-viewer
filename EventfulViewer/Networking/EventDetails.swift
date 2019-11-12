@@ -32,7 +32,7 @@ struct EventDetail: Codable {
             self.description = (try? container.decode(String.self, forKey: .description)) ?? ""
             self.startTime = (try? container.decode(String.self, forKey: .startTime)) ?? ""
             self.url = (try? container.decode(String.self, forKey: .url)) ?? ""
-            self.image = (try? container.decode(Image?.self, forKey: .image)) 
+            self.image = (try? container.decode(Image?.self, forKey: .image))
         }
 
     enum CodingKeys: String, CodingKey {
