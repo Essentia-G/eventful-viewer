@@ -8,23 +8,23 @@
 
 import Foundation
 
-class EventParserServise: IEventParserService {
+class EventParserServise: EventParserServiceProtocol {
 
-    private let eventParser: IEventParser
-
-    init(eventParser: IEventParser) {
-        self.eventParser = eventParser
-    }
-
-    func loadEvent(urlString: String, completion: @escaping ((Event?, Error?) -> Void)) {
-        eventParser.jsonFromUrlGetter(urlString: urlString) { eventDetail, error in
-            if error != nil {
-                completion(nil, error)
-            } else if let eventDetail = eventDetail {
-                completion(eventDetail, nil)
-            } else {
-                completion(nil, NSError(domain: "", code: 0, userInfo: nil))
-            }
-        }
-    }
+//    private let eventParser: EventParserProtocol
+//
+//    init(eventParser: EventParserProtocol) {
+//        self.eventParser = eventParser
+//    }
+//
+//    func loadEvent(urlString: String, completion: @escaping ((Event?, Error?) -> Void)) {
+//        eventParser.jsonFromUrlGetter(urlString: urlString) { eventDetail, error in
+//            if error != nil {
+//                completion(nil, error)
+//            } else if let eventDetail = eventDetail {
+//                completion(eventDetail, nil)
+//            } else {
+//                completion(nil, NSError(domain: "", code: 0, userInfo: nil))
+//            }
+//        }
+//    }
 }

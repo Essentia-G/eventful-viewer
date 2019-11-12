@@ -21,13 +21,14 @@ class ViewController: UIViewController, MKMapViewDelegate {
     private let locationManager = CLLocationManager()
     private var latitude: Double = 55.75222
     private var longitude: Double = 37.61556
-    var arrayOfEvents = [Event]()
+    //var arrayOfEvents = [Event]()
 
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
-    
+
     // MARK: - Dependencies
 
-    var assembly: Assembly?
+    //var assembly: Assembly?
+    var eventParser = EventParser()
 
     // MARK: - Lifecycle
 
@@ -42,14 +43,10 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
         centerMapOnLocation(location: initialLocation)
         checkLocationAuthorizationStatus()
-
         guard let url = URL(string: apiUrlString) else { return }
-        URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
-
-            guard let self = self, let data = data else { return }
-
-            self.parse(json: data)
-            }.resume()
+        eventParser.jsonFromUrlGetter(url: url) { eventArray, error in
+            self.placePinsOnMap(arrayOfPins: eventArray)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -69,18 +66,15 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
 
     @IBAction func searchButtonTapped(_ sender: UIButton) {
-
-        if !searchField.text!.isEmpty {
-            if let eventCategory = searchField.text {
+        guard let searchingText = searchField.text else { return }
+        if !searchingText.isEmpty {
+            let eventCategory = searchingText
                 let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
                 mapKitView.removeAnnotations(annotationsToRemove)
                 let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" + eventCategory + "&location=moscow&sort_order=popularity"
-                guard let url = URL(string: desirableUrl) else { return }
-                URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
-
-                    guard let self = self, let data = data else { return }
-                    self.parse(json: data)
-                    }.resume()
+            guard let url = URL(string: desirableUrl) else { return }
+            eventParser.jsonFromUrlGetter(url: url) { eventArray, error in
+                self.placePinsOnMap(arrayOfPins: eventArray)
             }
             searchField.text?.removeAll()
         } else {
@@ -92,49 +86,42 @@ class ViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
-    func parse(json: Data) {
-        DispatchQueue.global().async { [weak self] in
-            let decoder = JSONDecoder()
-            let jsonEvents = try? decoder.decode(Events.self, from: json)
-            print(jsonEvents?.events?.event[0] ?? "Have no events")
-
-            guard let eventsToPin = jsonEvents?.events?.event else { return }
-                for index in eventsToPin.indices {
-                    print(eventsToPin[index].title)
-                    let latitudeAttempt = self?.receiveAPICoordinates(from:
-                        jsonEvents?.events?.event[index].latitude ?? "0.0")
-                    let longitudeAttempt = self?.receiveAPICoordinates(from:
-                        jsonEvents?.events?.event[index].longitude ?? "0.0")
-                    let titleAttempt = jsonEvents?.events?.event[index].title
-                    let descsriptionAttempt = jsonEvents?.events?.event[index].description
-                    let urlAttempt = NSURL(string: jsonEvents?.events?.event[index].url ?? "")
-
-                    if let image = jsonEvents?.events?.event[index].image {
-                        print(image.url)
-                    }
-
-                    guard let latitide = latitudeAttempt,
-                        let longitude = longitudeAttempt,
-                        let title = titleAttempt,
-                        let descript = descsriptionAttempt,
-                        let url = urlAttempt else { return }
-
-                    let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude),
-                                        title: title,
-                                        descript: descript,
-                                        url: url as URL)
-                    self?.mapKitView.addAnnotation(mapPin)
-                }
-            guard let currentAnnotations = self?.mapKitView.annotations else { return }
-            DispatchQueue.main.async { [weak self] in
-                self?.mapKitView.showAnnotations(currentAnnotations, animated: true)
-            }
-        }
-    }
-
     func receiveAPICoordinates(from strCoordinates: String) -> Double? {
         let doubCoordinates = Double(strCoordinates)
         return doubCoordinates
+    }
+
+    func placePinsOnMap(arrayOfPins: Event?) {
+        guard let eventsToPin = arrayOfPins?.event else { return }
+        for index in eventsToPin.indices {
+            print(eventsToPin[index].title)
+            let latitudeAttempt = self.receiveAPICoordinates(from:
+                eventsToPin[index].latitude)
+            let longitudeAttempt = self.receiveAPICoordinates(from:
+                eventsToPin[index].longitude)
+            let title = eventsToPin[index].title
+            let descsription = eventsToPin[index].description
+            let urlAttempt = NSURL(string: eventsToPin[index].url)
+
+            if let image = eventsToPin[index].image {
+                print(image.url)
+            }
+
+            guard let latitide = latitudeAttempt,
+                let longitude = longitudeAttempt,
+                let url = urlAttempt else { return }
+
+            let mapPin = MapPin(coordinate: CLLocationCoordinate2D(latitude: latitide, longitude: longitude),
+                                title: title,
+                                descript: descsription,
+                                url: url as URL)
+            self.mapKitView.addAnnotation(mapPin)
+        }
+
+        let currentAnnotations = self.mapKitView.annotations
+        DispatchQueue.main.async { [weak self] in
+            self?.mapKitView.showAnnotations(currentAnnotations, animated: true)
+        }
     }
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
@@ -169,8 +156,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
                 print("Cancel")
             }
             let openLinkActionButton = UIAlertAction(title: "Open link", style: .default, handler: { _ in
-                UIApplication.shared.open(url!, options: [:], completionHandler: nil)
-                NSLog("Open link")
+                guard let url = url else { return }
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                print("Open link")
             })
             actionSheet.addAction(openLinkActionButton)
             actionSheet.addAction(cancelActionButton)
@@ -179,13 +167,15 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
 
     func messageTextFormatter(line: String) -> String {
-        if line.contains("<p>") {
+        if line.contains("<p>") || line.contains("&#39;t") {
             var newLine = line.replacingOccurrences(of: "<p>", with: "")
-            newLine = newLine.replacingOccurrences(of: "</p>", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            newLine = line.replacingOccurrences(of: "&#39;", with: "'")
+            newLine = newLine.trimmingCharacters(in: .whitespacesAndNewlines)
             return newLine
-        } else {
-        return line
-    }
+            } else {
+                let newLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+                return newLine
+            }
     }
 
     func showError() {

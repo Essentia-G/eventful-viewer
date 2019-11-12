@@ -9,13 +9,13 @@
 import Foundation
 
 class Assembly {
-    let eventParser: IEventParser
-    let eventParserService: IEventParserService
+    let eventParser: EventParserProtocol
+   // let eventParserService: IEventParserService
 
     init() {
         let session = URLSession.shared
-        let eventParser = EventParser(session: session)
+        let eventParser = EventParser()
         self.eventParser = eventParser
-        self.eventParserService = EventParserServise(eventParser: eventParser)
+        //self.eventParserService = EventParserServise(eventParser: eventParser)
     }
 }

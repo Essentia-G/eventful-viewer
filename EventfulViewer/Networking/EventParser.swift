@@ -8,28 +8,15 @@
 
 import UIKit
 
-class EventParser: IEventParser {
+class EventParser: EventParserProtocol {
 
-    let session: URLSession
-
-    init(session: URLSession) {
-        self.session = session
-    }
-
-    func jsonFromUrlGetter(urlString: String, completion: @escaping (Event?, Error?) -> Void) {
-        let decoder = JSONDecoder()
-        guard let url = URL(string: urlString) else { fatalError() }
-        let request = URLRequest(url: url)
-        let dataTask = session.dataTask(with: request) { (data, response, error) in
-            if error != nil {
-                completion(nil, error)
-            } else if let data = data {
-                let jsonResponse = try? decoder.decode(Events.self, from: data)
-                completion(jsonResponse?.events, nil)
-            } else {
-                completion(nil, NSError(domain: "", code: 0, userInfo: nil))
-            }
-        }
-        dataTask.resume()
+    func jsonFromUrlGetter(url: URL, completion: @escaping (Event?, Error?) -> Void) {
+        URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
+            guard let data = data else { return }
+            let decoder = JSONDecoder()
+            let jsonEvents = try? decoder.decode(Events.self, from: data)
+            completion(jsonEvents?.events, nil)
+            print(jsonEvents?.events?.event[0] ?? "Have no events")
+        }.resume()
     }
 }

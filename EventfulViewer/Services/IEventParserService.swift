@@ -8,8 +8,8 @@
 
 import Foundation
 
-protocol IEventParserService {
+protocol EventParserServiceProtocol {
 
-    func loadEvent(urlString: String, completion: @escaping ((Event?, Error?) -> Void))
+    // func loadEvent(urlString: String, completion: @escaping ((Event?, Error?) -> Void))
 
 }
