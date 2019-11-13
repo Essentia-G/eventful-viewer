@@ -14,6 +14,7 @@ class EventParser: EventParserProtocol {
         URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
             guard let data = data else { return }
             let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
             let jsonEvents = try? decoder.decode(Events.self, from: data)
             completion(jsonEvents?.events, nil)
             print(jsonEvents?.events?.event[0] ?? "Have no events")

@@ -10,16 +10,16 @@ import Foundation
 
 struct EventDetail: Codable {
 
-    var id: String
-    var title: String
-    var latitude: String
-    var longitude: String
-    var url: String
-    var venueAddress: String
-    var regionName: String
-    var image: Image?
-    var description: String
-    var startTime: String
+    let id: String
+    let title: String
+    let latitude: String
+    let longitude: String
+    let url: String
+    let venueAddress: String
+    let regionName: String
+    let image: Image?
+    let description: String
+    let startTime: String
 
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -34,17 +34,4 @@ struct EventDetail: Codable {
             self.url = (try? container.decode(String.self, forKey: .url)) ?? ""
             self.image = (try? container.decode(Image?.self, forKey: .image))
         }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case title
-        case latitude
-        case longitude
-        case url
-        case venueAddress = "venue_address"
-        case regionName = "region_name"
-        case description
-        case startTime = "start_time"
-        case image
-    }
 }

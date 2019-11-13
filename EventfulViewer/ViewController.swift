@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
 
     // MARK: - UI
 
@@ -17,7 +17,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet private weak var searchField: UITextField!
     @IBOutlet private weak var mapKitView: MKMapView!
 
-    private let regionRadius: CLLocationDistance = 2500
+    private let regionRadius: CLLocationDistance = 3000
     private let locationManager = CLLocationManager()
     private var latitude: Double = 55.75222
     private var longitude: Double = 37.61556
@@ -35,13 +35,11 @@ class ViewController: UIViewController, MKMapViewDelegate {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
         mapKitView.delegate = self
+        searchField.delegate = self
 
         // set initial location in Moscow
-        latitude = 55.75222
-        longitude = 37.61556
-        let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
-        centerMapOnLocation(location: initialLocation)
-        checkLocationAuthorizationStatus()
+        setInitialLocation()
+
         guard let url = URL(string: apiUrlString) else { return }
         eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
                 self.placePinsOnMap(arrayOfPins: eventArray)
@@ -51,40 +49,35 @@ class ViewController: UIViewController, MKMapViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        configButton()
+        configSearchButton()
     }
 
-    func configButton() {
+    func setInitialLocation() {
+        latitude = 55.75222
+        longitude = 37.61556
+        let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
+        centerMapOnLocation(location: initialLocation)
+        checkLocationAuthorizationStatus()
+    }
+
+    func configSearchButton() {
         searchButton.imageView?.contentMode = .scaleAspectFit
     }
 
     func centerMapOnLocation(location: CLLocation) {
         let coordinateRegion = MKCoordinateRegion(center: location.coordinate,
-                                                  latitudinalMeters: regionRadius, longitudinalMeters: regionRadius)
+                                                  latitudinalMeters: regionRadius,
+                                                  longitudinalMeters: regionRadius)
         mapKitView.setRegion(coordinateRegion, animated: true)
     }
 
     @IBAction func searchButtonTapped(_ sender: UIButton) {
-        guard let searchingText = searchField.text else { return }
-        if !searchingText.isEmpty {
-            let eventCategory = searchingText
-                let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
-                mapKitView.removeAnnotations(annotationsToRemove)
-                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" +
-                    eventCategory +
-                    "&location=moscow&sort_order=popularity"
-            guard let url = URL(string: desirableUrl) else { return }
-            eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
-                self.placePinsOnMap(arrayOfPins: eventArray)
-            }
-            searchField.text?.removeAll()
-        } else {
-            let alertController = UIAlertController(title: "Field is empty",
-                                       message: "Please enter your text",
-                                       preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alertController, animated: true)
-        }
+        searchByCategory()
+    }
+
+    @IBAction func primaryActionTriggered(_ sender: Any) {
+        dismissKeyboard()
+        searchByCategory()
     }
 
     func receiveAPICoordinates(from strCoordinates: String) -> Double? {
@@ -124,6 +117,29 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let currentAnnotations = self.mapKitView.annotations
         DispatchQueue.main.async { [weak self] in
             self?.mapKitView.showAnnotations(currentAnnotations, animated: true)
+        }
+    }
+
+    func searchByCategory() {
+        guard let searchingText = searchField.text else { return }
+        if !searchingText.isEmpty {
+            let eventCategory = searchingText
+            let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
+            mapKitView.removeAnnotations(annotationsToRemove)
+            let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" +
+                                eventCategory +
+                                "&location=moscow&sort_order=popularity"
+            guard let url = URL(string: desirableUrl) else { return }
+            eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
+                self.placePinsOnMap(arrayOfPins: eventArray)
+            }
+            searchField.text?.removeAll()
+        } else {
+            let alertController = UIAlertController(title: "Field is empty",
+                                                    message: "Please enter your text",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alertController, animated: true)
         }
     }
 

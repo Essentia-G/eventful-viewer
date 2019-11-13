@@ -9,16 +9,10 @@
 import Foundation
 
 struct Events: Codable {
-    var events: Event?
+    let events: Event?
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.events = (try? container.decode(Event.self, forKey: .events))
     }
-
-    enum CodingKeys: String, CodingKey {
-        case events
-
-    }
-
 }
