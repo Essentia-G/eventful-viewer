@@ -17,12 +17,13 @@ class ViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet private weak var searchField: UITextField!
     @IBOutlet private weak var mapKitView: MKMapView!
 
-    private let regionRadius: CLLocationDistance = 2000
+    private let regionRadius: CLLocationDistance = 2500
     private let locationManager = CLLocationManager()
     private var latitude: Double = 55.75222
     private var longitude: Double = 37.61556
 
-    let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
+    let apiUrlString =
+    "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
 
     // MARK: - Dependencies
 
@@ -42,8 +43,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         centerMapOnLocation(location: initialLocation)
         checkLocationAuthorizationStatus()
         guard let url = URL(string: apiUrlString) else { return }
-        eventParser.jsonFromUrlGetter(url: url) { eventArray, error in
-            self.placePinsOnMap(arrayOfPins: eventArray)
+        eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
+                self.placePinsOnMap(arrayOfPins: eventArray)
         }
     }
 
@@ -69,9 +70,11 @@ class ViewController: UIViewController, MKMapViewDelegate {
             let eventCategory = searchingText
                 let annotationsToRemove = mapKitView.annotations.filter { $0 !== mapKitView.userLocation }
                 mapKitView.removeAnnotations(annotationsToRemove)
-                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" + eventCategory + "&location=moscow&sort_order=popularity"
+                let desirableUrl = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&category=" +
+                    eventCategory +
+                    "&location=moscow&sort_order=popularity"
             guard let url = URL(string: desirableUrl) else { return }
-            eventParser.jsonFromUrlGetter(url: url) { eventArray, error in
+            eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
                 self.placePinsOnMap(arrayOfPins: eventArray)
             }
             searchField.text?.removeAll()
@@ -127,7 +130,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let eventAnnotation = view.annotation as? MapPin {
             let title = eventAnnotation.title
-            var descript = (eventAnnotation.descript ?? "") + "\n\n" + "Start time: " + (eventAnnotation.startTime ?? "")
+            var descript = (eventAnnotation.descript ?? "") +
+                            "\n\n" + "Start time: " +
+                            (eventAnnotation.startTime ?? "")
             descript = messageTextFormatter(line: descript)
             let url = eventAnnotation.url
             print(title ?? "" + "\n")
@@ -166,7 +171,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
     }
 
     func messageTextFormatter(line: String) -> String {
-        if line.contains("<p>") || line.contains("&#39;t") {
+        if line.contains("<p>") || line.contains("&#39;") {
             var newLine = line.replacingOccurrences(of: "<p>", with: "")
             newLine = line.replacingOccurrences(of: "&#39;", with: "'")
             newLine = newLine.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -179,7 +184,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
 
     func showError() {
         let alertController = UIAlertController(title: "Loading error",
-                                                message: "Please check your connection and try again",
+                                                message: "Something went wrong",
                                                 preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(alertController, animated: true)
