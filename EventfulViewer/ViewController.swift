@@ -146,9 +146,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let eventAnnotation = view.annotation as? MapPin {
             let title = eventAnnotation.title
-            var descript = (eventAnnotation.descript ?? "") +
+            var descript = (eventAnnotation.descript) +
                             "\n\n" + "Start time: " +
-                            (eventAnnotation.startTime ?? "")
+                            (eventAnnotation.startTime)
             descript = messageTextFormatter(line: descript)
             let url = eventAnnotation.url
             print(title ?? "" + "\n")
