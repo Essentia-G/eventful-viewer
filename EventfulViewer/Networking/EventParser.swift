@@ -10,6 +10,8 @@ import UIKit
 
 class EventParser: EventParserProtocol {
 
+    let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
+
     func jsonFromUrlGetter(url: URL, completion: @escaping (Event?, Error?) -> Void) {
         URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
             guard let data = data else { return }
@@ -17,7 +19,7 @@ class EventParser: EventParserProtocol {
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let jsonEvents = try? decoder.decode(Events.self, from: data)
             completion(jsonEvents?.events, nil)
-            print(jsonEvents?.events?.event[0] ?? "Have no events")
+            //print(jsonEvents?.events?.event[0] ?? "Have no events")
         }.resume()
     }
 }
