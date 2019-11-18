@@ -16,6 +16,7 @@ class TableViewController: UITableViewController {
     let attributedTextGetter = AttributedTextGetter()
     var givenEvents = [EventDetail]()
     let messageFormatter = MessageFormatter()
+    var currentEventArray = [EventDetail]()
 
     let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
 
@@ -23,13 +24,14 @@ class TableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // MARK: - What I'm trying to do with a closure
-        
+
         guard let url = URL(string: eventParser.apiUrlString) else { return }
         eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
-            let currentEventArray = eventArray
+            self.currentEventArray = eventArray?.event ?? []
         }
+
 
         if let url = URL(string: apiUrlString) {
             if let data = try? Data(contentsOf: url) {
