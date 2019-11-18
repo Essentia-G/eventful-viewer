@@ -136,7 +136,7 @@
             </objects>
             <point key="canvasLocation" x="2012" y="1180"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Bookmarks-->
         <scene sceneID="uak-61-6pe">
             <objects>
                 <tableViewController id="yJp-kr-sDn" sceneMemberID="viewController">
@@ -145,7 +145,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Sjf-Fg-4O8">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Sjf-Fg-4O8">
                                 <rect key="frame" x="0.0" y="28" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sjf-Fg-4O8" id="MM7-Fp-xHz">
@@ -159,17 +159,17 @@
                             <outlet property="delegate" destination="yJp-kr-sDn" id="mDp-C5-r9z"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="hxp-CI-k4O"/>
+                    <navigationItem key="navigationItem" title="Bookmarks" id="hxp-CI-k4O"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NcH-Et-IJZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2012" y="1906"/>
         </scene>
-        <!--Item-->
+        <!--Navigation Controller-->
         <scene sceneID="Zkj-RT-EOp">
             <objects>
                 <navigationController id="ptb-Fj-f1g" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="gPW-Qu-EcZ"/>
+                    <tabBarItem key="tabBarItem" systemItem="bookmarks" id="gPW-Qu-EcZ"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="AmP-hp-zyR">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>

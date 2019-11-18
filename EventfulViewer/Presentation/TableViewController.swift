@@ -14,53 +14,34 @@ class TableViewController: UITableViewController {
 
     let eventParser = EventParser()
     let attributedTextGetter = AttributedTextGetter()
-    var givenEvents = [EventDetail]()
     let messageFormatter = MessageFormatter()
-    var currentEventArray = [EventDetail]()
-
-    let apiUrlString = "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
+    var currentEventArray: [EventDetail] = []
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // MARK: - What I'm trying to do with a closure
-
-        guard let url = URL(string: eventParser.apiUrlString) else { return }
-        eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
-            self.currentEventArray = eventArray?.event ?? []
-        }
-
-
-        if let url = URL(string: apiUrlString) {
-            if let data = try? Data(contentsOf: url) {
-                parse(json: data)
-            } else {
-                showError()
-            }
-        } else {
-            showError()
-        }
+        parseArray()
 
         self.refreshControl?.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
+    }
+
+    private func parseArray() {
+        guard let url = URL(string: eventParser.apiUrlString) else { return }
+        eventParser.jsonFromUrlGetter(url: url) { [weak self] events, _ in
+            DispatchQueue.main.async {
+                guard let self = self, let newArray = events?.event else { return }
+                self.currentEventArray = newArray
+                self.tableView.reloadData()
+            }
+        }
     }
 
     @objc func refresh(sender: AnyObject) {
         // Updating data
         self.tableView.reloadData()
         self.refreshControl?.endRefreshing()
-    }
-
-    func parse(json: Data) {
-            let decoder = JSONDecoder()
-            if let jsonResult = try? decoder.decode(Events.self, from: json) {
-                guard let givenEventsTry = jsonResult.events?.event else { return }
-                givenEvents = givenEventsTry
-            DispatchQueue.main.async { [weak self] in
-                self?.tableView.reloadData()
-            }
-        }
     }
 
     func showError() {
@@ -99,12 +80,12 @@ class TableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return givenEvents.count
+        return currentEventArray.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let event = givenEvents[indexPath.row]
+        let event = currentEventArray[indexPath.row]
         cell.textLabel?.text = event.title
         cell.detailTextLabel?.text = event.description
         return cell
@@ -112,18 +93,20 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let ac = UIAlertController(title: "Choose action", message: nil, preferredStyle: .alert)
-        //ac.addAction(UIAlertAction(title: "Save to favourites", style: .default))
+
         let showDetailsAction = UIAlertAction(title: "Show details", style: .default, handler: { [weak self] _ in
-            guard let title = self?.givenEvents[indexPath.row].title else { return }
-            guard let description = self?.givenEvents[indexPath.row].description else { return }
-            guard let url = self?.givenEvents[indexPath.row].url else { return }
+            guard let title = self?.currentEventArray[indexPath.row].title else { return }
+            guard let description = self?.currentEventArray[indexPath.row].description else { return }
+            guard let url = self?.currentEventArray[indexPath.row].url else { return }
             self?.showEventDetails(title: title, description: description, urlString: url)
         })
+
         let saveToAction = UIAlertAction(title: "Save to...", style: .default) { [weak self] _ in
-            guard let title = self?.givenEvents[indexPath.row].title else { return }
-            guard let description = self?.givenEvents[indexPath.row].description else { return }
-            guard let url = self?.givenEvents[indexPath.row].url else { return }
-            let textInfo = title + "\n\n" + description + "\n\n" + url
+            guard let title = self?.currentEventArray[indexPath.row].title else { return }
+            guard let description = self?.currentEventArray[indexPath.row].description else { return }
+            guard let url = self?.currentEventArray[indexPath.row].url else { return }
+            var textInfo = title + "\n\n" + description + "\n\n" + url
+            textInfo = self?.messageFormatter.messageTextFormatter(line: textInfo) ?? ""
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [textInfo], applicationActivities: nil)
             activityViewController.excludedActivityTypes = [
                 UIActivity.ActivityType.print,
@@ -133,9 +116,10 @@ class TableViewController: UITableViewController {
             self?.present(activityViewController, animated: true, completion: nil)
         }
 
+        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel)
+
         ac.addAction(showDetailsAction)
         ac.addAction(saveToAction)
-        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel)
         ac.addAction(cancelActionButton)
         self.present(ac, animated: true, completion: nil)
         tableView.deselectRow(at: indexPath, animated: true)

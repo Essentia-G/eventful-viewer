@@ -22,9 +22,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
     private var latitude: Double = 55.75222
     private var longitude: Double = 37.61556
 
-//    let apiUrlString =
-//    "http://api.eventful.com/json/events/search?app_key=PN85FnVbJXZCWxP3&location=moscow&sort_order=popularity"
-
     // MARK: - Dependencies
 
     var eventParser = EventParser()
@@ -42,10 +39,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
         // set initial location in Moscow
         setInitialLocation()
 
-        guard let url = URL(string: eventParser.apiUrlString) else { return }
-        eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
-                self.placePinsOnMap(arrayOfPins: eventArray)
-        }
+        //call parser
+        parseArray()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -60,6 +55,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
         let initialLocation = CLLocation(latitude: latitude, longitude: longitude)
         centerMapOnLocation(location: initialLocation)
         checkLocationAuthorizationStatus()
+    }
+
+    private func parseArray() {
+        guard let url = URL(string: eventParser.apiUrlString) else { return }
+        eventParser.jsonFromUrlGetter(url: url) { events, _ in
+            self.placePinsOnMap(events: events)
+        }
     }
 
     func configSearchButton() {
@@ -87,8 +89,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
         return doubCoordinates
     }
 
-    func placePinsOnMap(arrayOfPins: Event?) {
-        guard let eventsToPin = arrayOfPins?.event else { return }
+    func placePinsOnMap(events: Event?) {
+        guard let eventsToPin = events?.event else { return }
         for index in eventsToPin.indices {
             print(eventsToPin[index].title)
             let latitudeAttempt = self.receiveAPICoordinates(from:
@@ -132,8 +134,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
                                 eventCategory +
                                 "&location=moscow&sort_order=popularity"
             guard let url = URL(string: desirableUrl) else { return }
-            eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
-                self.placePinsOnMap(arrayOfPins: eventArray)
+            eventParser.jsonFromUrlGetter(url: url) { events, _ in
+                self.placePinsOnMap(events: events)
             }
             searchField.text?.removeAll()
         } else {

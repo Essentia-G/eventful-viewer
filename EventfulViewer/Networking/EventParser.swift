@@ -19,7 +19,6 @@ class EventParser: EventParserProtocol {
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let jsonEvents = try? decoder.decode(Events.self, from: data)
             completion(jsonEvents?.events, nil)
-            //print(jsonEvents?.events?.event[0] ?? "Have no events")
         }.resume()
     }
 }
