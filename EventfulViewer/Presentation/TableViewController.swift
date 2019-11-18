@@ -23,6 +23,13 @@ class TableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // MARK: - What I'm trying to do with a closure
+        
+        guard let url = URL(string: eventParser.apiUrlString) else { return }
+        eventParser.jsonFromUrlGetter(url: url) { eventArray, _ in
+            let currentEventArray = eventArray
+        }
 
         if let url = URL(string: apiUrlString) {
             if let data = try? Data(contentsOf: url) {
@@ -103,16 +110,32 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let ac = UIAlertController(title: "Choose action", message: nil, preferredStyle: .alert)
-        ac.addAction(UIAlertAction(title: "Save to favourites", style: .default))
-        let showDetailsButton = UIAlertAction(title: "Show details", style: .default, handler: { [weak self] _ in
+        //ac.addAction(UIAlertAction(title: "Save to favourites", style: .default))
+        let showDetailsAction = UIAlertAction(title: "Show details", style: .default, handler: { [weak self] _ in
             guard let title = self?.givenEvents[indexPath.row].title else { return }
             guard let description = self?.givenEvents[indexPath.row].description else { return }
             guard let url = self?.givenEvents[indexPath.row].url else { return }
             self?.showEventDetails(title: title, description: description, urlString: url)
         })
-        ac.addAction(showDetailsButton)
+        let saveToAction = UIAlertAction(title: "Save to...", style: .default) { [weak self] _ in
+            guard let title = self?.givenEvents[indexPath.row].title else { return }
+            guard let description = self?.givenEvents[indexPath.row].description else { return }
+            guard let url = self?.givenEvents[indexPath.row].url else { return }
+            let textInfo = title + "\n\n" + description + "\n\n" + url
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [textInfo], applicationActivities: nil)
+            activityViewController.excludedActivityTypes = [
+                UIActivity.ActivityType.print,
+                UIActivity.ActivityType.assignToContact,
+                UIActivity.ActivityType.saveToCameraRoll
+            ]
+            self?.present(activityViewController, animated: true, completion: nil)
+        }
+
+        ac.addAction(showDetailsAction)
+        ac.addAction(saveToAction)
         let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel)
         ac.addAction(cancelActionButton)
         self.present(ac, animated: true, completion: nil)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
