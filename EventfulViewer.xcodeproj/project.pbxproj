@@ -30,6 +30,8 @@
 		85D3B1712362E4C100A30DF3 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D3B1702362E4C100A30DF3 /* Image.swift */; };
 		85D3B1732362E70A00A30DF3 /* Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D3B1722362E70A00A30DF3 /* Events.swift */; };
 		85D3B1762362EA1600A30DF3 /* EventParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D3B1752362EA1600A30DF3 /* EventParser.swift */; };
+		85EA2E062383D3EE001D4F17 /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EA2E052383D3EE001D4F17 /* DetailTableViewController.swift */; };
+		85EA2E082383FEF3001D4F17 /* CoordinatesConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EA2E072383FEF3001D4F17 /* CoordinatesConverter.swift */; };
 		85F65F062366FBBE0020D5A5 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F65F052366FBBE0020D5A5 /* Event.swift */; };
 		BCF0C0D58B53A6B129BE259C /* Pods_EventfulViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F37EB35B7EE75D1478756AE3 /* Pods_EventfulViewer.framework */; };
 /* End PBXBuildFile section */
@@ -61,6 +63,8 @@
 		85D3B1702362E4C100A30DF3 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		85D3B1722362E70A00A30DF3 /* Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Events.swift; sourceTree = "<group>"; };
 		85D3B1752362EA1600A30DF3 /* EventParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventParser.swift; sourceTree = "<group>"; };
+		85EA2E052383D3EE001D4F17 /* DetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
+		85EA2E072383FEF3001D4F17 /* CoordinatesConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatesConverter.swift; sourceTree = "<group>"; };
 		85F65F052366FBBE0020D5A5 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		95A42F0969DF4DC7A73FE157 /* Pods-EventfulViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EventfulViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-EventfulViewer/Pods-EventfulViewer.release.xcconfig"; sourceTree = "<group>"; };
 		F37EB35B7EE75D1478756AE3 /* Pods_EventfulViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EventfulViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,9 +94,11 @@
 			isa = PBXGroup;
 			children = (
 				859BC7DB23618F4200D65209 /* ViewController.swift */,
+				85EA2E072383FEF3001D4F17 /* CoordinatesConverter.swift */,
 				8563CA1A237EBFB300739778 /* MessageFormatter.swift */,
 				8563CA1C237ED7EA00739778 /* AttributedTextGetter.swift */,
 				8525D02D237D5F71001646C6 /* TableViewController.swift */,
+				85EA2E052383D3EE001D4F17 /* DetailTableViewController.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -317,6 +323,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85EA2E062383D3EE001D4F17 /* DetailTableViewController.swift in Sources */,
 				8504E79E2375647B00AC0D63 /* UIViewController+KeyboardDismissal.swift in Sources */,
 				85D3B1762362EA1600A30DF3 /* EventParser.swift in Sources */,
 				8504E7A22375810D00AC0D63 /* EventParserProtocol.swift in Sources */,
@@ -324,6 +331,7 @@
 				85D3B1732362E70A00A30DF3 /* Events.swift in Sources */,
 				85D3B16F2362DD4000A30DF3 /* EventDetails.swift in Sources */,
 				8563CA1D237ED7EA00739778 /* AttributedTextGetter.swift in Sources */,
+				85EA2E082383FEF3001D4F17 /* CoordinatesConverter.swift in Sources */,
 				8525D02E237D5F71001646C6 /* TableViewController.swift in Sources */,
 				859BC7DC23618F4200D65209 /* ViewController.swift in Sources */,
 				851FF68B23671FD600F70CB7 /* MapPin.swift in Sources */,

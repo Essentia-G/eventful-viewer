@@ -27,6 +27,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
     var eventParser = EventParser()
     let messageFormatter = MessageFormatter()
     let attributedTextGetter = AttributedTextGetter()
+    let coordinatesConverter = CoordinatesConverter()
 
     // MARK: - Lifecycle
 
@@ -84,18 +85,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UITextFieldDelegate {
         searchByCategory()
     }
 
-    func receiveAPICoordinates(from strCoordinates: String) -> Double? {
-        let doubCoordinates = Double(strCoordinates)
-        return doubCoordinates
-    }
-
     func placePinsOnMap(events: Event?) {
         guard let eventsToPin = events?.event else { return }
         for index in eventsToPin.indices {
             print(eventsToPin[index].title)
-            let latitudeAttempt = self.receiveAPICoordinates(from:
+            let latitudeAttempt = self.coordinatesConverter.receiveAPICoordinates(from:
                 eventsToPin[index].latitude)
-            let longitudeAttempt = self.receiveAPICoordinates(from:
+            let longitudeAttempt = self.coordinatesConverter.receiveAPICoordinates(from:
                 eventsToPin[index].longitude)
             let title = eventsToPin[index].title
             let descsription = eventsToPin[index].description

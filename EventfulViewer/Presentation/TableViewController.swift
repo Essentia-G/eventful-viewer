@@ -16,12 +16,13 @@ class TableViewController: UITableViewController {
     let attributedTextGetter = AttributedTextGetter()
     let messageFormatter = MessageFormatter()
     var currentEventArray: [EventDetail] = []
+    let detailTableView = DetailTableViewController()
+    let coordinatesConverter = CoordinatesConverter()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         parseArray()
 
         self.refreshControl?.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
@@ -33,6 +34,7 @@ class TableViewController: UITableViewController {
             DispatchQueue.main.async {
                 guard let self = self, let newArray = events?.event else { return }
                 self.currentEventArray = newArray
+                self.currentEventArray = self.currentEventArray.sorted(by: { $1.startTime > $0.startTime })
                 self.tableView.reloadData()
             }
         }
@@ -52,9 +54,11 @@ class TableViewController: UITableViewController {
         self.present(ac, animated: true)
     }
 
-    func showEventDetails(title: String, description: String, urlString: String) {
+    func showEventDetails(title: String, description: String, urlString: String, startTime: String) {
         let url = URL(string: urlString)
-        let descriptionFormatter = messageFormatter.messageTextFormatter(line: description)
+        let descriptionAndStartTime = description + "\n\n" + "Start time: " + startTime
+
+        let descriptionFormatter = messageFormatter.messageTextFormatter(line: descriptionAndStartTime)
         let titAndDesc = attributedTextGetter.attributedTextRecieve(title: title, description: descriptionFormatter)
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -98,7 +102,8 @@ class TableViewController: UITableViewController {
             guard let title = self?.currentEventArray[indexPath.row].title else { return }
             guard let description = self?.currentEventArray[indexPath.row].description else { return }
             guard let url = self?.currentEventArray[indexPath.row].url else { return }
-            self?.showEventDetails(title: title, description: description, urlString: url)
+            guard let startTime = self?.currentEventArray[indexPath.row].startTime else { return }
+            self?.showEventDetails(title: title, description: description, urlString: url, startTime: startTime)
         })
 
         let saveToAction = UIAlertAction(title: "Save to...", style: .default) { [weak self] _ in
@@ -116,12 +121,39 @@ class TableViewController: UITableViewController {
             self?.present(activityViewController, animated: true, completion: nil)
         }
 
-        let cancelActionButton = UIAlertAction(title: "Cancel", style: .cancel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 
         ac.addAction(showDetailsAction)
         ac.addAction(saveToAction)
-        ac.addAction(cancelActionButton)
+        ac.addAction(cancelAction)
         self.present(ac, animated: true, completion: nil)
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let modifyAction = UIContextualAction(style: .normal, title:  "+ bookmark", handler: { (ac: UIContextualAction, view: UIView, success: @escaping (Bool) -> Void) in
+            print("Adding a bookmark")
+            var bookmark = UITableViewRowAction(style: .normal, title: "bookmark") { [weak self] (action, indexPath) in
+                let defaults = UserDefaults.standard
+                var bookmarks = defaults.array(forKey: "bookmarks") as? [EventDetail] ?? []
+                bookmarks.append((self?.currentEventArray[indexPath.row])!)
+                defaults.set(bookmarks, forKey: "bookmarks")
+            }
+            success(true)
+        })
+        modifyAction.backgroundColor = .blue
+        return UISwipeActionsConfiguration(actions: [modifyAction])
+    }
+
+//    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//
+//        let bookmark = UITableViewRowAction(style: .normal, title: "bookmark") { [weak self] (action, indexPath) in
+//            let defaults = UserDefaults.standard
+//            var bookmarks = defaults.array(forKey: "bookmarks") as? [EventDetail] ?? []
+//            bookmarks.append((self?.currentEventArray[indexPath.row])!)
+//            defaults.set(bookmarks, forKey: "bookmarks")
+//        }
+//        return [bookmark]
+//    }
+//}
 }
