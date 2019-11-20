@@ -10,6 +10,9 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
+    var arrayOfBookmarks: [String] = []
+    let defaults = UserDefaults.standard
+
     // MARK: - Dependencies
 
     let eventParser = EventParser()
@@ -24,6 +27,7 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         parseArray()
+//        defaults.set(arrayOfBookmarks, forKey: "ArrayOfBookmarks")
 
         self.refreshControl?.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
     }
@@ -133,27 +137,14 @@ class TableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let modifyAction = UIContextualAction(style: .normal, title:  "+ bookmark", handler: { (ac: UIContextualAction, view: UIView, success: @escaping (Bool) -> Void) in
             print("Adding a bookmark")
-            var bookmark = UITableViewRowAction(style: .normal, title: "bookmark") { [weak self] (action, indexPath) in
-                let defaults = UserDefaults.standard
-                var bookmarks = defaults.array(forKey: "bookmarks") as? [EventDetail] ?? []
-                bookmarks.append((self?.currentEventArray[indexPath.row])!)
-                defaults.set(bookmarks, forKey: "bookmarks")
-            }
+            let titleAttempt = self.currentEventArray[indexPath.row].title
+            let descriprionAttempt = self.currentEventArray[indexPath.row].description
+            self.arrayOfBookmarks.append(titleAttempt)
+            self.defaults.set(self.arrayOfBookmarks, forKey: "ArrayOfBookmarks")
+
             success(true)
         })
         modifyAction.backgroundColor = .blue
         return UISwipeActionsConfiguration(actions: [modifyAction])
     }
-
-//    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-//
-//        let bookmark = UITableViewRowAction(style: .normal, title: "bookmark") { [weak self] (action, indexPath) in
-//            let defaults = UserDefaults.standard
-//            var bookmarks = defaults.array(forKey: "bookmarks") as? [EventDetail] ?? []
-//            bookmarks.append((self?.currentEventArray[indexPath.row])!)
-//            defaults.set(bookmarks, forKey: "bookmarks")
-//        }
-//        return [bookmark]
-//    }
-//}
 }

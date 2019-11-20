@@ -10,12 +10,24 @@ import UIKit
 
 class DetailTableViewController: UITableViewController {
 
-    var titleArray: [String] = []
+    var arrayOfBookmarksToShow: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
         DispatchQueue.main.async {
             self.tableView.reloadData()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let defaults = UserDefaults.standard
+ //       let title = defaults.string(forKey: "Title")
+ //       print(title)
+        guard let arrayOfBookmarks = defaults.array(forKey: "ArrayOfBookmarks") else { return }
+        arrayOfBookmarksToShow = arrayOfBookmarks as? [(String)] ?? [(String)]()
+        for i in arrayOfBookmarksToShow.indices {
+            print(arrayOfBookmarks[i])
         }
     }
 
@@ -26,13 +38,14 @@ class DetailTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return titleArray.count
+        return arrayOfBookmarksToShow.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let title = titleArray[indexPath.row]
-        cell.textLabel?.text = title
+        let contents = arrayOfBookmarksToShow[indexPath.row]
+        cell.textLabel?.text = contents
+        //cell.detailTextLabel?.text = contents.1
         return cell
     }
 }
