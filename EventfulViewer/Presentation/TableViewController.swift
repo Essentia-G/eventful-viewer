@@ -10,7 +10,7 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
-    var arrayOfBookmarks: [String] = []
+    var arrayOfBookmarks = [Bookmark]()
     let defaults = UserDefaults.standard
 
     // MARK: - Dependencies
@@ -27,7 +27,6 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         parseArray()
-//        defaults.set(arrayOfBookmarks, forKey: "ArrayOfBookmarks")
 
         self.refreshControl?.addTarget(self, action: #selector(refresh), for: UIControl.Event.valueChanged)
     }
@@ -134,14 +133,26 @@ class TableViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let modifyAction = UIContextualAction(style: .normal, title:  "+ bookmark", handler: { (ac: UIContextualAction, view: UIView, success: @escaping (Bool) -> Void) in
-            print("Adding a bookmark")
+    override func tableView(_ tableView: UITableView,
+                            trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let modifyAction = UIContextualAction(style: .normal,
+                                              title: "+ bookmark",
+                                              handler: { (ac: UIContextualAction, view: UIView, success: @escaping (Bool) -> Void) in
             let titleAttempt = self.currentEventArray[indexPath.row].title
             let descriprionAttempt = self.currentEventArray[indexPath.row].description
-            self.arrayOfBookmarks.append(titleAttempt)
-            self.defaults.set(self.arrayOfBookmarks, forKey: "ArrayOfBookmarks")
-
+            let bookmark = Bookmark(title: titleAttempt, description: descriprionAttempt)
+            if self.arrayOfBookmarks.firstIndex(where: {$0.title == titleAttempt}) == nil {
+                self.arrayOfBookmarks.append(bookmark)
+                let bookmarksData = try? PropertyListEncoder().encode(self.arrayOfBookmarks)
+                self.defaults.set(bookmarksData, forKey: "ArrayOfStructs")
+            } else {
+                let ac = UIAlertController(title: "The bookmark already exist",
+                                           message: "Please choose a different event to add a bookmark",
+                                           preferredStyle: .alert)
+                                ac.addAction(UIAlertAction(title: "OK", style: .default))
+                                self.present(ac, animated: true)
+            }
+            print("Bookmark added")
             success(true)
         })
         modifyAction.backgroundColor = .blue
